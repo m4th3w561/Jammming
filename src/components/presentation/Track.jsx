@@ -31,7 +31,7 @@ const Track = ({ name, artist, media, album, mediaAlt, button }) => {
         />
         <Box sx={ { display: 'flex', justifyContent: "space-between", padding: "0 2rem ", width:"100%", } }>
           <CardContent sx={ { justifyContent: "space-between", textAlign: "left", width:"100%"} }>
-            <Typography component="div" variant="h5" noWrap sx={{width: "100%", maxWidth: 400}}>
+            <Typography component="div" variant="h5" noWrap sx={{width: "100%", maxWidth: 200}}>
               { name }
             </Typography>
             <Typography

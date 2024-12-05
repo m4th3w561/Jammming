@@ -2,7 +2,7 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Container, Button } from '@mui/material';
+import { Container, Button, Box } from '@mui/material';
 import SearchBar from './components/presentation/SearchBar';
 import SearchResults from './components/presentation/SearchResults';
 import Playlist from './components/presentation/Playlist';
@@ -16,6 +16,7 @@ const darkTheme = createTheme({
 });
 
 function App () {
+  const [result, setResult] = useState({});
   const [resultList, setResultList] = useState([]);
   const [tracks, setTracks] = useState([]);
   const [playList, setPlayList] = useState([]);
@@ -23,8 +24,51 @@ function App () {
   const [isLoading, setIsLoading] = useState(false);
   const [userID, setUserID] = useState(null);
 
+  const searchResult = (data) => {
+    setResult(data);
+  };
   const retrieveResult = (result) => {
     setResultList(result);
+  };
+  const nextResults = async () => {
+    setResult({});
+    setResultList([]);
+    try {
+      const nextResult = await fetch(result.next, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${localStorage.access_token}`
+        }
+      });
+      if (!nextResult.ok) {
+        throw new Error("Failed to fetch next result");
+      }
+      const data = await nextResult.json();
+      setResult(data.tracks);
+      setResultList(data.tracks.items);
+    } catch (error) {
+      console.error("Error in next Results: ", error);
+    }
+  };
+  const prevResults = async () => {
+    setResult({});
+    setResultList([]);
+    try {
+      const prevResult = await fetch(result.previous, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${localStorage.access_token}`
+        }
+      });
+      if (!prevResult.ok) {
+        throw new Error("Failed to fetch previous result");
+      }
+      const data = await prevResult.json();
+      setResult(data.tracks);
+      setResultList(data.tracks.items);
+    } catch (error) {
+      console.error("Error in prev Results: ", error);
+    }
   };
 
   const selectTracks = (item) => {
@@ -64,32 +108,6 @@ function App () {
     }
   };
 
-  // const editPlaylistName = (newName, index) => {
-  //   setPlayList((prev) =>
-  //     prev.map((playlist, i) =>
-  //       i === index
-  //         ? {
-  //           ...playlist,
-  //           name: newName,
-  //         }
-  //         : playlist
-  //     )
-  //   );
-  // };
-
-  // const editPlaylistDescription = (newDescription, index) => {
-  //   setPlayList((prev) =>
-  //     prev.map((playlist, i) =>
-  //       i === index
-  //         ? {
-  //           ...playlist,
-  //           description: newDescription,
-  //         }
-  //         : playlist
-  //     )
-  //   );
-  // };
-
   const addNewPlayList = (item) => {
     setPlayList(prevTracks => prevTracks.includes(item) ? prevTracks : [...prevTracks, item]);
   };
@@ -119,19 +137,9 @@ function App () {
   const logData = async () => {
     // console.log(playList);
     // console.log(isAuthenticated);
-    try {
-      const result = await fetch(`https://api.spotify.com/v1/playlists/25c0OvctWpld9RRBxiGQcU/tracks`, {
-          method: "GET",
-          headers: { Authorization: `Bearer ${localStorage.access_token}` },
-      });
-      const data = await result.json();
-      console.log(data)
-      return data.items || [];
-
-  } catch (error) {
-      console.error(`Error retrieving tracks for playlist:`, error);
-      return [];
-  }
+    console.log("This is from result", result);
+    console.log("result.items", result.items);
+    console.log("This is from resultList", resultList);
   };
 
 
@@ -154,7 +162,6 @@ function App () {
   };
 
   useEffect(() => {
-    // Check for 'code' in the URL when the app loads
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
 
@@ -206,9 +213,15 @@ function App () {
           </header>
           { isAuthenticated ?
             <Container maxWidth="xl" sx={ { display: "flex", flexDirection: "column", gap: 2, alignItems: "center" } }>
-              <SearchBar retrieveResult={ retrieveResult } />
+              <SearchBar retrieveResult={ retrieveResult } searchResult={ searchResult } />
               <Container maxWidth="xl" disableGutters sx={ { display: "flex", padding: "1rem 0" } }>
-                <SearchResults resultList={ resultList } selectTracks={ selectTracks } deleteTrack={ deleteTrack } />
+                <Box sx={ { display: "flex", padding: "1rem 0", width: "100%", flexDirection: "column", alignItems: "center", marginBottom: 6, gap: 4 } }>
+                  <SearchResults resultList={ resultList } selectTracks={ selectTracks } deleteTrack={ deleteTrack } />
+                  <Box sx={ { display: "flex", gap: 1, } }>
+                    <Button variant="outlined" color="primary" onClick={ prevResults }>Back</Button>
+                    <Button variant="outlined" color="primary" onClick={ nextResults }>Next</Button>
+                  </Box>
+                </Box>
                 <Playlist userID={ userID } tracks={ tracks } deleteTrack={ deleteTrack } returnTrack={ returnTrack } addNewPlayList={ addNewPlayList } playList={ playList } deletePlaylist={ deletePlaylist } />
               </Container>
             </Container> :
@@ -227,6 +240,6 @@ function App () {
       </ThemeProvider>
     </div>
   );
-}
+};
 
 export default App;

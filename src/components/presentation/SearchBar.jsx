@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import { Button, Container } from "@mui/material";
 
 
-const SearchBar = ({ retrieveResult }) => {
+const SearchBar = ({ retrieveResult, searchResult }) => {
   const [userInput, setUserInput] = useState("");
 
   const handleChange = (event) => {
@@ -14,7 +14,7 @@ const SearchBar = ({ retrieveResult }) => {
 
   const handleClick = async (event) => {
     try {
-      const result = await fetch(`https://api.spotify.com/v1/search?q=${userInput}&type=track&market=US&limit=20`, {
+      const result = await fetch(`https://api.spotify.com/v1/search?q=${userInput}&type=track&market=US&limit=10`, {
         method: "GET",
         headers: { Authorization: `Bearer ${localStorage.access_token}` }
       });
@@ -22,16 +22,17 @@ const SearchBar = ({ retrieveResult }) => {
         throw new Error("Failed to fetch search result");
       }
       const data = await result.json();
-      retrieveResult(data.tracks.items)
-      
+      retrieveResult(data.tracks.items);
+      searchResult(data.tracks);
+      // "https://api.spotify.com/v1/search?offset=20&limit=20&query=Justin%20Bieber&type=track&market=US&locale=en-US,en"
     } catch (error) {
       console.error("Error in search fetch:", error);
     }
   };
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      event.preventDefault(); // Prevent form submission
-      handleClick(); // Trigger the search
+      event.preventDefault();
+      handleClick();
     }
   };
   const handleClear = () => {
