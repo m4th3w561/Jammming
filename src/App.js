@@ -30,44 +30,34 @@ function App () {
   const retrieveResult = (result) => {
     setResultList(result);
   };
-  const nextResults = async () => {
-    setResult({});
-    setResultList([]);
+  const fetchResults = async (url) => {
     try {
-      const nextResult = await fetch(result.next, {
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${localStorage.access_token}`
-        }
+          Authorization: `Bearer ${localStorage.access_token}`,
+        },
       });
-      if (!nextResult.ok) {
-        throw new Error("Failed to fetch next result");
+      if (!response.ok) {
+        throw new Error('Failed to fetch results');
       }
-      const data = await nextResult.json();
+      const data = await response.json();
       setResult(data.tracks);
       setResultList(data.tracks.items);
     } catch (error) {
-      console.error("Error in next Results: ", error);
+      console.error('Error fetching results:', error);
     }
   };
-  const prevResults = async () => {
-    setResult({});
-    setResultList([]);
-    try {
-      const prevResult = await fetch(result.previous, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${localStorage.access_token}`
-        }
-      });
-      if (!prevResult.ok) {
-        throw new Error("Failed to fetch previous result");
-      }
-      const data = await prevResult.json();
-      setResult(data.tracks);
-      setResultList(data.tracks.items);
-    } catch (error) {
-      console.error("Error in prev Results: ", error);
+
+  const nextResults = () => {
+    if (result.next) {
+      fetchResults(result.next);
+    }
+  };
+
+  const prevResults = () => {
+    if (result.previous) {
+      fetchResults(result.previous);
     }
   };
 
@@ -135,11 +125,7 @@ function App () {
   const redirectUri = "http://localhost:3000/";
 
   const logData = async () => {
-    // console.log(playList);
-    // console.log(isAuthenticated);
-    console.log("This is from result", result);
-    console.log("result.items", result.items);
-    console.log("This is from resultList", resultList);
+    console.log(tracks)
   };
 
 
@@ -217,10 +203,26 @@ function App () {
               <Container maxWidth="xl" disableGutters sx={ { display: "flex", padding: "1rem 0" } }>
                 <Box sx={ { display: "flex", padding: "1rem 0", width: "100%", flexDirection: "column", alignItems: "center", marginBottom: 6, gap: 4 } }>
                   <SearchResults resultList={ resultList } selectTracks={ selectTracks } deleteTrack={ deleteTrack } />
-                  <Box sx={ { display: "flex", gap: 1, } }>
-                    <Button variant="outlined" color="primary" onClick={ prevResults }>Back</Button>
-                    <Button variant="outlined" color="primary" onClick={ nextResults }>Next</Button>
-                  </Box>
+                  { resultList.length > 0 && (
+                    <Box sx={ { display: 'flex', gap: 1 } }>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={ prevResults }
+                        disabled={ !result.previous } // Disable if no previous
+                      >
+                        Back
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={ nextResults }
+                        disabled={ !result.next } // Disable if no next
+                      >
+                        Next
+                      </Button>
+                    </Box>
+                  ) }
                 </Box>
                 <Playlist userID={ userID } tracks={ tracks } deleteTrack={ deleteTrack } returnTrack={ returnTrack } addNewPlayList={ addNewPlayList } playList={ playList } deletePlaylist={ deletePlaylist } />
               </Container>

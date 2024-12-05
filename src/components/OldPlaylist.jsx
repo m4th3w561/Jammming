@@ -1,39 +1,64 @@
 import React, { useState } from "react";
-import { Box, Container, Grow } from '@mui/material';
+import { Box, Container, Grow, Button } from '@mui/material';
 import OldTrackList from "./OldTrackList";
 import OldTrack from "./OldTrack";
 
 const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlaylistDescription, deletePlaylist, setSpotifyPlaylist }) => {
     const [currentEditIndex, setCurrentEditIndex] = useState(null);
     const [tracksByPlaylist, setTracksByPlaylist] = useState({}); // Stores tracks per playlist, allowing efficient lookups and updates without re-fetching unnecessarily
+    const [paginationInfo, setPaginationInfo] = useState({});
 
     const toggleEdit = async (playlistName, playlistID, index) => {
         const isCurrentlyEditing = currentEditIndex === index;
         setCurrentEditIndex(isCurrentlyEditing ? null : index);
 
         if (!isCurrentlyEditing && !tracksByPlaylist[playlistID]) {
-            const tracks = await getPlaylistTracks(playlistID, playlistName);
-            setTracksByPlaylist(prev => ({ ...prev, [playlistID]: tracks }));
+            const { items, next, previous } = await getPlaylistTracks(playlistID);
+            setTracksByPlaylist(prev => ({ ...prev, [playlistID]: items }));
+            setPaginationInfo(prev => ({
+                ...prev,
+                [playlistID]: { next, previous },
+            }));
         }
     };
 
-    const getPlaylistTracks = async (playlistID, playlistName) => {
+    const getPlaylistTracks = async (playlistID, url = null) => {
         try {
-            const result = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
+            const apiUrl = url || `https://api.spotify.com/v1/playlists/${playlistID}/tracks?market=US&limit=10`;
+            const result = await fetch(apiUrl, {
                 method: "GET",
                 headers: { Authorization: `Bearer ${localStorage.access_token}` },
             });
             const data = await result.json();
-            return data.items || [];
-
+            return { items: data.items || [], next: data.next, previous: data.previous };
         } catch (error) {
-            console.error(`Error retrieving tracks for playlist ${playlistName}:`, error);
-            return [];
+            console.error(`Error retrieving tracks for playlist ${playlistID}:`, error);
+            return { items: [], next: null, previous: null };
         }
     };
 
+    const fetchMoreTracks = async (playlistID, direction) => {
+        const pageUrl = paginationInfo[playlistID]?.[direction];
+        if (!pageUrl) return; // No next/previous page
+
+        try {
+            const { items, next, previous } = await getPlaylistTracks(playlistID, pageUrl);
+            setTracksByPlaylist(prev => ({
+                ...prev,
+                [playlistID]: items, // Replace with the current batch
+            }));
+            setPaginationInfo(prev => ({
+                ...prev,
+                [playlistID]: { next, previous },
+            }));
+        } catch (error) {
+            console.error(`Error fetching ${direction} tracks for playlist ${playlistID}:`, error);
+        }
+    };
+
+
     return (
-        <Container disableGutters maxWidth="lg" sx={ { display: "flex", flexDirection: "column", alignItems: "start", gap: 4 } }>
+        <Container disableGutters maxWidth="lg" sx={ { display: "flex", flexDirection: "column", alignItems: "start", gap: 4, marginBottom: 10 } }>
             { spotifyPlaylist.map((item, index) => {
                 const isEditing = currentEditIndex === index;
                 const handleDeletePlaylist = () => deletePlaylist(item);
@@ -86,6 +111,26 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                                     context="oldPlaylist"
                                     playListIndex={ index }
                                 />
+                                { playlistTracks.length > 9 && (
+                                    <Box sx={ { display: "flex", gap: 1, } }>
+                                        <Button
+                                            variant="outlined"
+                                            color="primary"
+                                            onClick={ () => fetchMoreTracks(item.id, "previous") }
+                                            disabled={ !paginationInfo[item.id]?.previous }
+                                        >
+                                            Back
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            color="primary"
+                                            onClick={ () => fetchMoreTracks(item.id, "next") }
+                                            disabled={ !paginationInfo[item.id]?.next } 
+                                        >
+                                            Next
+                                        </Button>
+                                    </Box>
+                                ) }
                             </Container>
                         ) }
                     </React.Fragment>
