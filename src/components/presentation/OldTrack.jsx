@@ -164,7 +164,7 @@ const OldTrack = ({
                                     </Box>
                                 </Box>) :
                                 <>
-                                    <Typography component="div" variant="h5" noWrap sx={ { width: "100%", maxWidth: 400 } }>
+                                    <Typography component="div" variant="h5" noWrap sx={ { width: "100%", minWidth: "100%", maxWidth: 100, } }>
                                         { playListName }
                                     </Typography>
                                     <Typography
@@ -181,7 +181,7 @@ const OldTrack = ({
                             :
                             context === "trackName" ?
                                 <>
-                                    <Typography component="div" variant="h5" noWrap sx={ { width: "100%", maxWidth: 400 } }>
+                                    <Typography component="div" variant="h5" noWrap sx={ { width: "100%", minWidth: "100%", maxWidth: 100, } }>
                                         { name }
                                     </Typography>
                                     <Typography

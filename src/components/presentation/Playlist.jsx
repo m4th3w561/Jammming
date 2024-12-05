@@ -101,28 +101,27 @@ const Playlist = ({
       // Filter playlists where the owner is the user
       const userOwnedPlaylists = data.items.filter(item => item?.owner?.id === userID);
       setSpotifyPlaylist(userOwnedPlaylists);
-      console.log(spotifyPlaylist)
     } catch (error) {
       console.error("Error retrieving user's playlists", error);
     }
   };
 
   return (
-    <Container maxWidth="lg" sx={ { display: "flex", flexDirection: "column", alignItems: "start", gap: 3, marginTop: 1 } } >
+    <Container maxWidth="lg" sx={ { display: "flex", flexDirection: "column", alignItems: "start", gap: 4, marginTop: 2 } } >
       { !createToggle ?
         <Box sx={ { display: "flex", gap: 4 } }>
           <Button
             variant="contained"
-            sx={ { fontFamily: "Lexend" } }
+            sx={ { fontFamily: "Lexend", minWidth: "100%", maxWidth: 82 } }
             onClick={ handleToggle }
             size='large'
             color="primary"
           >
-            Create New Playlist
+            Create Playlist
           </Button>
           <Button
             variant="contained"
-            sx={ { fontFamily: "Lexend" } }
+            sx={ { fontFamily: "Lexend", minWidth: "100%", maxWidth: 100 } }
             onClick={ loadPlaylist }
             size='large'
             color="primary"

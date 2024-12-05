@@ -11,7 +11,7 @@ import { CardActionArea, Paper } from "@mui/material";
 const Track = ({ name, artist, media, album, mediaAlt, button }) => {
 
   return (
-    <Paper elevation={ 1 } sx={ { display: 'flex', width: "100%", overflow: "visible", boxShadow: 2, borderRadius: 2 } }>
+    <Paper elevation={ 1 } sx={ { display: 'flex', width: "100%", minWidth: 200, overflow: "visible", boxShadow: 2, borderRadius: 2 } }>
       <CardActionArea sx={ { display: 'flex', justifyContent: "space-between" } } >
         <CardMedia
           component="img"
@@ -29,19 +29,20 @@ const Track = ({ name, artist, media, album, mediaAlt, button }) => {
           image={ media }
           alt={ mediaAlt }
         />
-        <Box sx={ { display: 'flex', justifyContent: "space-between", padding: "0 2rem ", width:"100%", } }>
-          <CardContent sx={ { justifyContent: "space-between", textAlign: "left", width:"100%"} }>
-            <Typography component="div" variant="h5" noWrap sx={{width: "100%", maxWidth: 200}}>
+        <Box sx={ { display: 'flex', justifyContent: "space-between", padding: "0 2rem ", width: "100%", minWidth: 200 } }>
+          <CardContent sx={ { justifyContent: "space-between", textAlign: "left", width: "100%" } }>
+            <Typography component="div" variant="h5" noWrap sx={ { width: "100%", minWidth: "100%", maxWidth: 100 } }>
               { name }
             </Typography>
             <Typography
               variant="subtitle1"
               component="div"
-              sx={ { color: 'text.secondary' } }
+              noWrap
+              sx={ { color: 'text.secondary', width: "100%", minWidth: "100%", maxWidth: 100 } }
             >
               { artist }
             </Typography>
-            <Typography component="div" variant="subtitle2" color="grey">
+            <Typography component="div" variant="subtitle2" color="grey" noWrap sx={ { minWidth: "100%", maxWidth: 100 } }>
               { album }
             </Typography>
           </CardContent>
