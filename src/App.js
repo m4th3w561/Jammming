@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Container, Button, Box } from '@mui/material';
-import SearchBar from './components/presentation/SearchBar';
-import SearchResults from './components/presentation/SearchResults';
-import Playlist from './components/presentation/Playlist';
+import SearchBar from './components/SearchBar';
+import SearchResults from './components/SearchResults';
+import Playlist from './components/Playlist';
 import { redirectToAuthCodeFlow, getToken, getUserID } from './authenticator';
-import Footer from './components/presentation/Footer';
+import Footer from './components/Footer';
 
 const darkTheme = createTheme({
   palette: {
