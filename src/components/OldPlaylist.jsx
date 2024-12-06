@@ -93,7 +93,6 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                                     index={ index }
                                     playlistID={ item?.id }
                                     setSpotifyPlaylist={ setSpotifyPlaylist }
-                                    // refreshPlaylistTracks={ refreshPlaylistTracks }
                                 />
                             </Box>
                         </Grow>
@@ -141,30 +140,31 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                                             playListName={ item?.name }
                                             refreshPlaylistTracks={ refreshPlaylistTracks }
                                         />
+                                        { (playlistTracks.length > 9 || paginationInfo[item.id]?.previous) && (
+                                            <Box sx={ { display: "flex", gap: 1, marginTop: 2} }>
+                                                <Button
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    onClick={ () => fetchMoreTracks(item.id, "previous") }
+                                                    disabled={ !paginationInfo[item.id]?.previous }
+                                                >
+                                                    Back
+                                                </Button>
+                                                <Button
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    onClick={ () => fetchMoreTracks(item.id, "next") }
+                                                    disabled={ !paginationInfo[item.id]?.next }
+                                                >
+                                                    Next
+                                                </Button>
+                                            </Box>
+                                        ) }
                                     </Box>
                                 )
                                 }
 
-                                { (playlistTracks.length > 9 || paginationInfo[item.id]?.previous) && (
-                                    <Box sx={ { display: "flex", gap: 1, } }>
-                                        <Button
-                                            variant="outlined"
-                                            color="primary"
-                                            onClick={ () => fetchMoreTracks(item.id, "previous") }
-                                            disabled={ !paginationInfo[item.id]?.previous }
-                                        >
-                                            Back
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            color="primary"
-                                            onClick={ () => fetchMoreTracks(item.id, "next") }
-                                            disabled={ !paginationInfo[item.id]?.next }
-                                        >
-                                            Next
-                                        </Button>
-                                    </Box>
-                                ) }
+
                             </Container>
                         ) }
                     </Container>
