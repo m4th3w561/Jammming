@@ -98,10 +98,10 @@ function App () {
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const urlParams = new URLSearchParams(window.location.search);
   let code = urlParams.get('code');
-  const redirectUri = "https://jammming-a-spotify-playlist-editor.netlify.app/";
+  const redirectUri = "https://spot-on-playlist.netlify.app/";
 
   const logData = async () => {
-    console.log(tracks);
+    console.log(redirectUri);
   };
 
 
