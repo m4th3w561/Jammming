@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import { Button, Container } from "@mui/material";
 
 
-const SearchBar = ({ retrieveResult, searchResult }) => {
+const SearchBar = ({ retrieveResult, searchResult, resultList }) => {
   const [userInput, setUserInput] = useState("");
 
   const handleChange = (event) => {
@@ -24,7 +24,6 @@ const SearchBar = ({ retrieveResult, searchResult }) => {
       const data = await result.json();
       retrieveResult(data.tracks.items);
       searchResult(data.tracks);
-      // "https://api.spotify.com/v1/search?offset=20&limit=20&query=Justin%20Bieber&type=track&market=US&locale=en-US,en"
     } catch (error) {
       console.error("Error in search fetch:", error);
     }
@@ -56,7 +55,7 @@ const SearchBar = ({ retrieveResult, searchResult }) => {
           placeholder="Search for a song" />
         <Box sx={ { display: "flex", alignItems: "center", gap: "1rem" } }>
           <Button
-            variant="contained"
+            variant={resultList.length !== 0 && userInput ? "outlined" : "contained"}
             sx={ { fontFamily: "Lexend" } }
             disabled={ !userInput }
             onClick={ handleClick }
@@ -68,7 +67,7 @@ const SearchBar = ({ retrieveResult, searchResult }) => {
           <Button
             variant="contained"
             sx={ { fontFamily: "Lexend" } }
-            disabled={ !userInput }
+            disabled={ resultList.length === 0 }
             onClick={ handleClear }
             size='large'
             color="primary"

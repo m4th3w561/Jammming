@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Button, Box, TextField } from "@mui/material";
-import TrackList from "./TrackList";
 import OldPlaylist from "./OldPlaylist";
 
 const Playlist = ({
@@ -8,24 +7,11 @@ const Playlist = ({
   tracks,
   deleteTrack,
   returnTrack,
-  addNewPlayList,
-  deletePlaylist,
 }) => {
   const [createToggle, setCreateToggle] = useState(false);
   const [newPlaylist, setNewPlaylist] = useState("");
-  const [oldPlayList, setOldPlayList] = useState(true);
   const [description, setDescription] = useState("");
   const [spotifyPlaylist, setSpotifyPlaylist] = useState([]);
-
-  useEffect(() => {
-    if (tracks.length === 0 && !newPlaylist.trim()) {
-      setCreateToggle(false);
-      setOldPlayList(true);
-    } else {
-      setCreateToggle(true);
-      setOldPlayList(false);
-    }
-  }, [tracks, newPlaylist]);
 
   const handleToggle = () => {
     setCreateToggle(true);
@@ -41,7 +27,7 @@ const Playlist = ({
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     const newPlaylistName = newPlaylist;
     const newDescription = description;
     if (newPlaylist && description) {
@@ -67,10 +53,10 @@ const Playlist = ({
       }
     };
 
-    deleteTrack("all");
     setNewPlaylist("");
     setDescription("");
     setCreateToggle(false);
+    loadPlaylist();
     return;
   };
 
@@ -82,8 +68,6 @@ const Playlist = ({
   };
 
   const handleCancel = () => {
-    returnTrack(tracks);
-    deleteTrack("all");
     setNewPlaylist("");
     setDescription("");
     setCreateToggle(false);
@@ -177,40 +161,34 @@ const Playlist = ({
               </Box>
             </Box>
             <Container disableGutters sx={ { display: "flex", flexWrap: "wrap", justifyContent: "start", gap: 4, width: "100%" } }>
-              <TrackList
-                tracks={ tracks }
-                deleteTrack={ deleteTrack }
-                returnTrack={ returnTrack }
-                context={ "playList" }
-                button={ "delete" } />
+              <Box sx={ { display: "flex", gap: 2 } }>
+                <Button
+                  variant="contained"
+                  sx={ { fontFamily: "Lexend" } }
+                  onClick={ handleSubmit }
+                  disabled={ !newPlaylist }
+                  size='large'
+                  color="primary"
+                >
+                  Save to Spotify
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={ { fontFamily: "Lexend" } }
+                  onClick={ handleCancel }
+                  size='large'
+                  color="primary"
+                >
+                  Cancel
+                </Button>
+              </Box>
             </Container>
-            <Box sx={ { display: "flex", gap: 2 } }>
-              <Button
-                variant="contained"
-                sx={ { fontFamily: "Lexend" } }
-                onClick={ handleSubmit }
-                disabled={ !newPlaylist }
-                size='large'
-                color="primary"
-              >
-                Save to Spotify
-              </Button>
-              <Button
-                variant="contained"
-                sx={ { fontFamily: "Lexend" } }
-                onClick={ handleCancel }
-                size='large'
-                color="primary"
-              >
-                Cancel
-              </Button>
-            </Box>
           </Container>
         </Container>
       }
-      { oldPlayList && (
-        <OldPlaylist spotifyPlaylist={ spotifyPlaylist } deleteTrack={ deleteTrack } deletePlaylist={ deletePlaylist }
-          setSpotifyPlaylist={ setSpotifyPlaylist } userID={ userID }
+      { spotifyPlaylist && (
+        <OldPlaylist spotifyPlaylist={ spotifyPlaylist } deleteTrack={ deleteTrack }
+          setSpotifyPlaylist={ setSpotifyPlaylist } userID={ userID } tracks={ tracks } returnTrack={ returnTrack }
         />
       ) }
     </Container>
