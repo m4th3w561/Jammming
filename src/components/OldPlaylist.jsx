@@ -144,7 +144,7 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                                 )
                                 }
 
-                                { playlistTracks.length > 9 && (
+                                { playlistTracks.length > 9 || paginationInfo[item.id]?.previous && (
                                     <Box sx={ { display: "flex", gap: 1, } }>
                                         <Button
                                             variant="outlined"

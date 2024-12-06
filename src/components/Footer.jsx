@@ -33,7 +33,7 @@ const Footer = ({ logData, handleLogout }) => (
             color="primary"
             onClick={ handleLogout }
         >
-            Log Out
+            Refresh
         </Button>
     </Paper>
 );
