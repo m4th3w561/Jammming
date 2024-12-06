@@ -132,7 +132,7 @@ function App () {
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const urlParams = new URLSearchParams(window.location.search);
   let code = urlParams.get('code');
-  const redirectUri = "http://localhost:3000/";
+  const redirectUri = "https://jammming-a-spotify-playlist-editor.netlify.app/";
 
   const logData = async () => {
     // console.log(playList);
