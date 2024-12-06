@@ -151,7 +151,7 @@ function App () {
     setIsAuthenticated(false);
     setUserID(null);
     localStorage.clear();
-    window.location.href = "http://localhost:3000/";
+    window.location.href = "https://spot-on-playlist.netlify.app/";
   };
 
   return (
