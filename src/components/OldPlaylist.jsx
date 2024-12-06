@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Box, Container, Grow, Button } from '@mui/material';
+import { Box, Container, Grow, Button, Typography } from '@mui/material';
 import OldTrackList from "./OldTrackList";
 import OldTrack from "./OldTrack";
+import TrackList from "./TrackList";
 
-const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlaylistDescription, deletePlaylist, setSpotifyPlaylist }) => {
+const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlaylistDescription, deletePlaylist, setSpotifyPlaylist, tracks, returnTrack }) => {
     const [currentEditIndex, setCurrentEditIndex] = useState(null);
-    const [tracksByPlaylist, setTracksByPlaylist] = useState({}); // Stores tracks per playlist, allowing efficient lookups and updates without re-fetching unnecessarily
+    const [tracksByPlaylist, setTracksByPlaylist] = useState({});
     const [paginationInfo, setPaginationInfo] = useState({});
 
     const toggleEdit = async (playlistName, playlistID, index) => {
@@ -39,13 +40,13 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
 
     const fetchMoreTracks = async (playlistID, direction) => {
         const pageUrl = paginationInfo[playlistID]?.[direction];
-        if (!pageUrl) return; // No next/previous page
+        if (!pageUrl) return;
 
         try {
             const { items, next, previous } = await getPlaylistTracks(playlistID, pageUrl);
             setTracksByPlaylist(prev => ({
                 ...prev,
-                [playlistID]: items, // Replace with the current batch
+                [playlistID]: items,
             }));
             setPaginationInfo(prev => ({
                 ...prev,
@@ -65,11 +66,11 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                 const playlistTracks = tracksByPlaylist[item.id] || [];
 
                 return (
-                    <React.Fragment key={ item.id }>
+                    <Container maxWidth="lg" key={ item.id }>
                         <Grow
                             in={ true }
                             style={ { transformOrigin: "left" } }
-                            timeout={ index * 500 }
+                            timeout={ index * 800 }
                         >
                             <Box
                                 sx={ { width: "100%", minWidth: 460, cursor: 'pointer' } }
@@ -101,16 +102,42 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                                     justifyContent: "start",
                                     gap: 4,
                                     width: "100%",
-                                    marginTop: 1,
-                                    marginLeft: 6
+                                    marginTop: 4,
+                                    marginLeft: 6,
                                 } }
                             >
-                                <OldTrackList
-                                    tracks={ playlistTracks }
-                                    deleteTrack={ deleteTrack }
-                                    context="oldPlaylist"
-                                    playListIndex={ index }
-                                />
+                                { tracks.length > 0 ? (
+                                    <TrackList
+                                        playListName={ item?.name }
+                                        playlistID={item.id}
+                                        tracks={ tracks }
+                                        deleteTrack={ deleteTrack }
+                                        returnTrack={ returnTrack }
+                                        context={ "playList" }
+                                        button={ "delete" }
+                                    />
+                                ) : (
+                                    <Box
+                                        sx={ {
+                                            display: "flex",
+                                            flexWrap: "wrap",
+                                            justifyContent: "start",
+                                            gap: 2,
+                                            width: "100%",
+                                        } }>
+                                        <Typography component="div" variant="p" noWrap color="#616161">
+                                            You can add tracks from the search results
+                                        </Typography>
+                                        <OldTrackList
+                                            tracks={ playlistTracks }
+                                            deleteTrack={ deleteTrack }
+                                            context="oldPlaylist"
+                                            playListIndex={ index }
+                                        />
+                                    </Box>
+                                )
+                                }
+
                                 { playlistTracks.length > 9 && (
                                     <Box sx={ { display: "flex", gap: 1, } }>
                                         <Button
@@ -125,7 +152,7 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                                             variant="outlined"
                                             color="primary"
                                             onClick={ () => fetchMoreTracks(item.id, "next") }
-                                            disabled={ !paginationInfo[item.id]?.next } 
+                                            disabled={ !paginationInfo[item.id]?.next }
                                         >
                                             Next
                                         </Button>
@@ -133,7 +160,7 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                                 ) }
                             </Container>
                         ) }
-                    </React.Fragment>
+                    </Container>
                 );
             }) }
         </Container >

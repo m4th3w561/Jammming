@@ -16,7 +16,7 @@ const OldTrackList = ({ deleteTrack, tracks, playListIndex, context }) => {
                                 key={ item.id || item.name || `playlist-${index}` }
                                 in={ true }
                                 style={ { transformOrigin: "left" } }
-                                timeout={ index * 500 }
+                                timeout={ index * 800 }
                             >
                                 <Box sx={ { width: "100%", minWidth: 460 } }>
                                     <OldTrack

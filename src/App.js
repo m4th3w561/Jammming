@@ -62,7 +62,7 @@ function App () {
   };
 
   const selectTracks = (item) => {
-    setTracks(prevTracks => prevTracks.includes(item) ? prevTracks : [...prevTracks, item]);
+    setTracks(prevTracks => prevTracks.includes(item) ? prevTracks : [item, ...prevTracks]);
     setResultList(prevTracks => prevTracks.filter(track => track !== item));
   };
 
@@ -98,9 +98,9 @@ function App () {
     }
   };
 
-  const addNewPlayList = (item) => {
-    setPlayList(prevTracks => prevTracks.includes(item) ? prevTracks : [...prevTracks, item]);
-  };
+  // const addNewPlayList = (item) => {
+  //   setPlayList(prevTracks => prevTracks.includes(item) ? prevTracks : [...prevTracks, item]);
+  // };
 
   const deletePlaylist = (item) => {
     setPlayList((prev) => prev.filter((track) => track !== item));
@@ -125,7 +125,7 @@ function App () {
   const redirectUri = "http://localhost:3000/";
 
   const logData = async () => {
-    console.log(tracks)
+    console.log(tracks);
   };
 
 
@@ -199,12 +199,12 @@ function App () {
           </header>
           { isAuthenticated ?
             <Container maxWidth="xl" sx={ { display: "flex", flexDirection: "column", gap: 2, alignItems: "center" } }>
-              <SearchBar retrieveResult={ retrieveResult } searchResult={ searchResult } />
+              <SearchBar retrieveResult={ retrieveResult } searchResult={ searchResult } resultList={ resultList } />
               <Container maxWidth="xl" disableGutters sx={ { display: "flex", padding: "1rem 0" } }>
                 <Box sx={ { display: "flex", padding: "1rem 0", width: "100%", flexDirection: "column", alignItems: "center", marginBottom: 6, gap: 4 } }>
                   <SearchResults resultList={ resultList } selectTracks={ selectTracks } deleteTrack={ deleteTrack } />
                   { resultList.length > 0 && (
-                    <Box sx={ { display: 'flex', gap: 1 } }>
+                    <Box sx={ { display: 'flex', gap: 1, width: "100%", minWidth: "100%", maxWidth: 100, justifyContent:"center" } }>
                       <Button
                         variant="outlined"
                         color="primary"
@@ -224,7 +224,7 @@ function App () {
                     </Box>
                   ) }
                 </Box>
-                <Playlist userID={ userID } tracks={ tracks } deleteTrack={ deleteTrack } returnTrack={ returnTrack } addNewPlayList={ addNewPlayList } playList={ playList } deletePlaylist={ deletePlaylist } />
+                <Playlist userID={ userID } tracks={ tracks } deleteTrack={ deleteTrack } returnTrack={ returnTrack } playList={ playList } deletePlaylist={ deletePlaylist } />
               </Container>
             </Container> :
             <Button
