@@ -18,9 +18,8 @@ const OldTrack = ({
     button,
     context,
     deleteOldTrack,
-    deletePlaylist,
     playlistID,
-    setSpotifyPlaylist
+    setSpotifyPlaylist,
 }) => {
     const [editName, setEditName] = useState("");
     const [editDescription, setEditDescription] = useState("");
@@ -48,37 +47,38 @@ const OldTrack = ({
         event.preventDefault();
         const currentName = editName;
         const currentDescription = editDescription;
-        
-        try {
-            const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}`, {
-                method: "PUT",
-                headers: {
-                    Authorization: `Bearer ${localStorage.access_token}`,
-                    'Content-Type': " application/json"
-                },
-                body: JSON.stringify({
-                    name: currentName,
-                    description: currentDescription,
-                    public: true,
-                    collaborative: false,
-                }),
-            });
-            if (!response.ok) {
-                throw new Error(`Failed to update playlist: ${response.status} ${response.statusText}`);
+        if (currentName && currentDescription) {
+            try {
+                const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}`, {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.access_token}`,
+                        'Content-Type': " application/json"
+                    },
+                    body: JSON.stringify({
+                        name: currentName,
+                        description: currentDescription,
+                        public: true,
+                        collaborative: false,
+                    }),
+                });
+                if (!response.ok) {
+                    throw new Error(`Failed to update playlist: ${response.status} ${response.statusText}`);
+                }
+
+                setEditToggle(false);
+
+                setSpotifyPlaylist((prevPlaylists) =>
+                    prevPlaylists.map((playlist) =>
+                        playlist.id === playlistID
+                            ? { ...playlist, name: currentName, description: currentDescription }
+                            : playlist
+                    )
+                );
+
+            } catch (error) {
+                console.error("Error in updating playlist:", error);
             }
-
-            setEditToggle(false)
-
-            setSpotifyPlaylist((prevPlaylists) =>
-                prevPlaylists.map((playlist) =>
-                    playlist.id === playlistID
-                        ? { ...playlist, name: currentName, description: currentDescription }
-                        : playlist
-                )
-            );
-
-        } catch (error) {
-            console.error("Error in updating playlist:", error);
         }
     };
 
@@ -153,13 +153,13 @@ const OldTrack = ({
                                             update
                                         </Button>
                                         <Button
-                                            variant="contained"
+                                            variant="outlined"
                                             sx={ { fontFamily: "Lexend" } }
-                                            onClick={ deletePlaylist }
                                             size='large'
                                             color="primary"
+                                            onClick={ handleCancel }
                                         >
-                                            Delete
+                                            Cancel
                                         </Button>
                                     </Box>
                                 </Box>) :
