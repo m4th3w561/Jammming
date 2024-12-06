@@ -57,6 +57,11 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
         }
     };
 
+    const refreshPlaylistTracks = async (playlistID) => {
+        const { items, next, previous } = await getPlaylistTracks(playlistID);
+        setTracksByPlaylist(prev => ({ ...prev, [playlistID]: items }));
+        setPaginationInfo(prev => ({ ...prev, [playlistID]: { next, previous } }));
+    };
 
     return (
         <Container disableGutters maxWidth="lg" sx={ { display: "flex", flexDirection: "column", alignItems: "start", gap: 4, marginBottom: 10 } }>
@@ -109,12 +114,13 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                                 { tracks.length > 0 ? (
                                     <TrackList
                                         playListName={ item?.name }
-                                        playlistID={item.id}
+                                        playlistID={ item.id }
                                         tracks={ tracks }
                                         deleteTrack={ deleteTrack }
                                         returnTrack={ returnTrack }
                                         context={ "playList" }
                                         button={ "delete" }
+                                        refreshPlaylistTracks={ refreshPlaylistTracks }
                                     />
                                 ) : (
                                     <Box

@@ -2,7 +2,17 @@ import React from "react";
 import { Box, Container, Grow, Button, Typography } from "@mui/material";
 import Track from "./Track";
 
-const TrackList = ({ resultList, playListName, playlistID, selectTracks, deleteTrack, tracks, returnTrack, context }) => {
+const TrackList = ({
+  resultList,
+  playListName,
+  playlistID,
+  selectTracks,
+  deleteTrack,
+  tracks,
+  returnTrack,
+  refreshPlaylistTracks,
+  context
+}) => {
 
   const handleSubmit = async () => {
     const trackUris = tracks.map(track => track.uri);
@@ -19,6 +29,9 @@ const TrackList = ({ resultList, playListName, playlistID, selectTracks, deleteT
       });
       if (!response.ok) {
         throw new Error(`Failed to add tracks to ${playListName}: ${response.status} ${response.statusText}`);
+      }
+      if (refreshPlaylistTracks) {
+        await refreshPlaylistTracks(playlistID);
       }
     } catch (error) {
       console.error(`Error adding tracks for playlist ${playListName}:`, error);
