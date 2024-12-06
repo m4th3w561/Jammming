@@ -7,7 +7,6 @@ const Playlist = ({
   tracks,
   deleteTrack,
   returnTrack,
-  deletePlaylist,
 }) => {
   const [createToggle, setCreateToggle] = useState(false);
   const [newPlaylist, setNewPlaylist] = useState("");
@@ -57,6 +56,7 @@ const Playlist = ({
     setNewPlaylist("");
     setDescription("");
     setCreateToggle(false);
+    loadPlaylist();
     return;
   };
 
@@ -187,7 +187,7 @@ const Playlist = ({
         </Container>
       }
       { spotifyPlaylist && (
-        <OldPlaylist spotifyPlaylist={ spotifyPlaylist } deleteTrack={ deleteTrack } deletePlaylist={ deletePlaylist }
+        <OldPlaylist spotifyPlaylist={ spotifyPlaylist } deleteTrack={ deleteTrack }
           setSpotifyPlaylist={ setSpotifyPlaylist } userID={ userID } tracks={ tracks } returnTrack={ returnTrack }
         />
       ) }

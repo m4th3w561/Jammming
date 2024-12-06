@@ -24,7 +24,6 @@ const SearchBar = ({ retrieveResult, searchResult, resultList }) => {
       const data = await result.json();
       retrieveResult(data.tracks.items);
       searchResult(data.tracks);
-      // "https://api.spotify.com/v1/search?offset=20&limit=20&query=Justin%20Bieber&type=track&market=US&locale=en-US,en"
     } catch (error) {
       console.error("Error in search fetch:", error);
     }

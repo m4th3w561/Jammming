@@ -19,7 +19,6 @@ function App () {
   const [result, setResult] = useState({});
   const [resultList, setResultList] = useState([]);
   const [tracks, setTracks] = useState([]);
-  const [playList, setPlayList] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userID, setUserID] = useState(null);
@@ -78,32 +77,9 @@ function App () {
       case "playList":
         return setTracks((prev) => prev.filter((track) => track !== item));
 
-      case "oldPlaylist":
-        setPlayList((prev) =>
-          prev.map((playlist, i) =>
-            i === index
-              ? {
-                ...playlist,
-                tracks: playlist.tracks.filter(
-                  (track) => track.id !== item.id
-                ),
-              }
-              : playlist
-          )
-        );
-        break;
-
       default:
         console.warn("Invalid context:", context);
     }
-  };
-
-  // const addNewPlayList = (item) => {
-  //   setPlayList(prevTracks => prevTracks.includes(item) ? prevTracks : [...prevTracks, item]);
-  // };
-
-  const deletePlaylist = (item) => {
-    setPlayList((prev) => prev.filter((track) => track !== item));
   };
 
   const returnTrack = (item) => {
@@ -175,15 +151,7 @@ function App () {
     setIsAuthenticated(false);
     setUserID(null);
     localStorage.clear();
-    // Optionally, log out any other session data (but keep cached data intact)
-    // Example: Don't touch the 'cachedData' in localStorage
-    // localStorage.removeItem('cachedData'); // Only remove if you don't want to preserve
-
     window.location.href = "http://localhost:3000/";
-
-    // Keep cached data in memory (assuming you store it in React state or localStorage)
-    // Example: Leave cacheData untouched if it's stored in a state
-    console.log("User logged out but cache data retained");
   };
 
   return (
@@ -224,7 +192,7 @@ function App () {
                     </Box>
                   ) }
                 </Box>
-                <Playlist userID={ userID } tracks={ tracks } deleteTrack={ deleteTrack } returnTrack={ returnTrack } playList={ playList } deletePlaylist={ deletePlaylist } />
+                <Playlist userID={ userID } tracks={ tracks } deleteTrack={ deleteTrack } returnTrack={ returnTrack } />
               </Container>
             </Container> :
             <Button

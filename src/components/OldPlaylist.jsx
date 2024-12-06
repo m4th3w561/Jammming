@@ -4,7 +4,7 @@ import OldTrackList from "./OldTrackList";
 import OldTrack from "./OldTrack";
 import TrackList from "./TrackList";
 
-const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlaylistDescription, deletePlaylist, setSpotifyPlaylist, tracks, returnTrack }) => {
+const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlaylistDescription, setSpotifyPlaylist, tracks, returnTrack }) => {
     const [currentEditIndex, setCurrentEditIndex] = useState(null);
     const [tracksByPlaylist, setTracksByPlaylist] = useState({});
     const [paginationInfo, setPaginationInfo] = useState({});
@@ -67,7 +67,6 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
         <Container disableGutters maxWidth="lg" sx={ { display: "flex", flexDirection: "column", alignItems: "start", gap: 4, marginBottom: 10 } }>
             { spotifyPlaylist.map((item, index) => {
                 const isEditing = currentEditIndex === index;
-                const handleDeletePlaylist = () => deletePlaylist(item);
                 const playlistTracks = tracksByPlaylist[item.id] || [];
 
                 return (
@@ -92,9 +91,9 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                                     editPlaylistName={ editPlaylistName }
                                     editPlaylistDescription={ editPlaylistDescription }
                                     index={ index }
-                                    deletePlaylist={ handleDeletePlaylist }
                                     playlistID={ item?.id }
                                     setSpotifyPlaylist={ setSpotifyPlaylist }
+                                    // refreshPlaylistTracks={ refreshPlaylistTracks }
                                 />
                             </Box>
                         </Grow>
@@ -136,15 +135,17 @@ const OldPlaylist = ({ spotifyPlaylist, deleteTrack, editPlaylistName, editPlayl
                                         </Typography>
                                         <OldTrackList
                                             tracks={ playlistTracks }
-                                            deleteTrack={ deleteTrack }
                                             context="oldPlaylist"
                                             playListIndex={ index }
+                                            playlistID={ item.id }
+                                            playListName={ item?.name }
+                                            refreshPlaylistTracks={ refreshPlaylistTracks }
                                         />
                                     </Box>
                                 )
                                 }
 
-                                { playlistTracks.length > 9 || paginationInfo[item.id]?.previous && (
+                                { (playlistTracks.length > 9 || paginationInfo[item.id]?.previous) && (
                                     <Box sx={ { display: "flex", gap: 1, } }>
                                         <Button
                                             variant="outlined"
